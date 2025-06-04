@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>React Todo List</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script>
+    const { useState } = React;
+
+    function App() {
+      const [tasks, setTasks] = useState([]);
+      const [input, setInput] = useState('');
+
+      const addTask = (e) => {
+        e.preventDefault();
+        if (!input.trim()) return;
+        setTasks([...tasks, { text: input, done: false }]);
+        setInput('');
+      };
+
+      const toggleTask = (index) => {
+        setTasks(tasks.map((t, i) => i === index ? { ...t, done: !t.done } : t));
+      };
+
+      const deleteTask = (index) => {
+        setTasks(tasks.filter((_, i) => i !== index));
+      };
+
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Todo List'),
+          React.createElement('form', { onSubmit: addTask },
+            React.createElement('input', {
+              type: 'text',
+              value: input,
+              placeholder: 'Add a task',
+              onChange: (e) => setInput(e.target.value)
+            }),
+            React.createElement('button', { type: 'submit' }, 'Add')
+          ),
+          React.createElement('ul', null,
+            tasks.map((task, index) => (
+              React.createElement('li', { key: index },
+                React.createElement('label', {
+                  style: { textDecoration: task.done ? 'line-through' : 'none' }
+                },
+                  React.createElement('input', {
+                    type: 'checkbox',
+                    checked: task.done,
+                    onChange: () => toggleTask(index)
+                  }),
+                  task.text
+                ),
+                React.createElement('button', { onClick: () => deleteTask(index) }, 'Delete')
+              )
+            ))
+          )
+        )
+      );
+    }
+
+    ReactDOM.render(React.createElement(App), document.getElementById('root'));
+  </script>
+</body>
+</html>
+
